@@ -1,12 +1,16 @@
 import json
 import re
+import os
 from google import genai
+
 from tools import tool_query_generator, tool_arxiv_search, tool_synthesis
+
+api_key = os.getenv("GOOGLE_API_KEY")
 
 class Agent:
     def __init__(self, model="gemini-2.0-flash-lite", max_iterations=3):
         """Initialize the agent with configurable model and max iterations."""
-        self.client = genai.Client()
+        self.client = genai.Client(api_key=api_key)
         self.model = model
         self.max_iterations = max_iterations
         self.tools = {
@@ -62,13 +66,16 @@ class Agent:
         """Add a new tool to the agent dynamically."""
         self.tools[name] = function
 
-    def run(self, user_question):
+    def run(self, user_question, date_from=None, date_to=None):
         """Run the agent to process the user's question."""
         
         for iteration in range(1, self.max_iterations + 1):
             print(f"Agent Iteration {iteration}")
             
             try:
+                date_context = ""
+                if date_from and date_to:
+                    date_context = f'\nIMPORTANT: The user has specified a date range. You MUST include date_from: "{date_from}" and date_to: "{date_to}" in the arxiv_search tool inputs.'
                 # Get execution plan from LLM
                 plan_prompt = self.system_prompt + f'\n\nUser Question: "{user_question}"'
                 response = self.client.models.generate_content(

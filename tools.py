@@ -56,9 +56,18 @@ def tool_arxiv_search(inputs):
     """Tool to search arXiv and return parsed papers."""
     query_keywords = inputs.get('query_keywords', '')
     max_results = inputs.get('max_results', 5)
+    date_from = inputs.get('date_from')
+    date_to = inputs.get('date_to')
     
     if not query_keywords:
         return "Error: No query keywords provided."
+    
+    if date_from and date_to:
+        # Format YYYY-MM-DD to YYYYMMDD
+        from_formatted = date_from.replace('-', '')
+        to_formatted = date_to.replace('-', '')
+        date_query = f" AND submittedDate:[{from_formatted} TO {to_formatted}]"
+        query_keywords += date_query
     
     base_url = 'http://export.arxiv.org/api/query?'
     params = {

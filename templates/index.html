@@ -19,8 +19,24 @@
             </div>
 
             <form id="research-form">
-                <input type="text" id="question" class="form-control" placeholder="e.g., How are diffusion models used for LLMs?" required>
-                <button type="submit">Research</button>
+                <div class="main-search">
+                    <input type="text" id="question" class="form-control" placeholder="e.g., How are diffusion models used for LLMs?" required>
+                    <button type="submit">Research</button>
+                </div>
+
+                <div class="advanced-container">
+                    <a id="advanced-toggle" href="#">Advanced Options</a>
+                    <div id="advanced-options" style="display: none;">
+                        <div class="date-range">
+                            <label for="date_from">From:</label>
+                            <input type="date" id="date_from" name="date_from">
+                        </div>
+                        <div class="date-range">
+                            <label for="date_to">To:</label>
+                            <input type="date" id="date_to" name="date_to">
+                        </div>
+                    </div>
+                </div>
             </form>
 
             <div id="loading" style="display: none;">
@@ -35,7 +51,6 @@
             <div id="results-container"></div>
         </div>
     </div>
-
     <script src="/static/script.js"></script>
 </body>
 </html>

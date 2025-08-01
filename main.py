@@ -18,12 +18,16 @@ async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/research")
-async def research(question: str = Form(...)):
+async def research(
+    question: str = Form(...),
+    date_from: str = Form(None),
+    date_to: str = Form(None)
+):
     if not question:
         return JSONResponse(content={'error': 'No question provided'}, status_code=400)
 
     agent = Agent()
-    answer = agent.run(question)
+    answer = agent.run(question, date_from=date_from, date_to=date_to)
     return JSONResponse(content={'answer': answer})
 
 if __name__ == "__main__":
