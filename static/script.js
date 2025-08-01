@@ -33,7 +33,14 @@ document.getElementById('research-form').addEventListener('submit', async functi
             let html = marked.parse(data.answer);
 
             // Dynamically create citation links
-            html = html.replace(/\u005c[(\d+)\u005c]/g, '<a href="#source-$1" class="citation-link">[$1]</a>');
+            //html = html.replace(/\[(\d+)\]/g, '<a href="#source-$1" class="citation-link">[$1]</a>');
+            html = html.replace(/\[([\d,\s]+)\]/g, (match, innerContent) => {
+                const links = innerContent.split(',')
+                    .map(num => num.trim())
+                    .map(num => `<a href="#source-${num}" class="citation-link">${num}</a>`)
+                    .join(', ');
+                return `[${links}]`;
+            });
 
             resultsContainer.innerHTML = html;
             addCitationEventListeners();

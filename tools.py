@@ -104,7 +104,7 @@ def tool_arxiv_search(inputs):
         return f"Error parsing XML: {e}"
 
 def tool_synthesis(inputs):
-    """Tool to synthesize an answer from papers."""
+    """Tool to synthesize an answer from papers and append a formatted source list."""
     original_question = inputs.get('original_question', '')
     papers = inputs.get('papers', [])
     
@@ -113,26 +113,27 @@ def tool_synthesis(inputs):
     
     print("Tool: Synthesizing findings...")
     
+    # Create a context string for the LLM with numbered paper details
     papers_context = ""
     for i, paper in enumerate(papers, 1):
-        papers_context += f"Source [{i}]: "
-        papers_context += f"Title: <a href='{paper['link']}' target='_blank'>{paper['title']}</a>\n"
-        
+        # Don't pass HTML to the LLM context, just the raw text
+        papers_context += f"Source [{i}]: Title: {paper['title']}. Summary: {paper['summary']}\n"
+    
+    # Update the prompt to ask ONLY for the report text.
     prompt = f"""
-    You are a meticulous research analyst. Your task is to write a report that answers the user's question by synthesizing information from the provided paper summaries.
+    You are a meticulous research analyst. Your task is to write a concise, paragraph-style report that answers the user's question by synthesizing information from the provided paper summaries.
 
     **Instructions:**
-    1. Write a coherent, paragraph-style report that integrates the findings from the papers.
-    2. For every claim or finding you take from a source, you **must** add a citation marker at the end of the sentence, like `[1]`, `[2]`, corresponding to the source number. Format the citation as a link, e.g., `[1](#source-1)`.
-    3. After the report, add a heading titled "**Sources**".
-    4. Under the "Sources" heading, create a numbered list where each item has an ID that matches the citation, e.g., `<li id="source-1">`. Each item should contain the full title of the source paper as a clickable link that opens in a new tab.
+    1. Write a coherent report that integrates the findings from the papers.
+    2. For every claim or finding you take from a source, you **must** add a citation marker at the end of the sentence, like `[1]`, `[2]`, or `[1, 3]`.
+    3. Do NOT add a "Sources" heading or list. Produce ONLY the paragraph report text.
 
     Original User Question: "{original_question}"
 
     Here are the numbered sources you must use:
     {papers_context}
 
-    Produce only the report and the sources list as requested.
+    Produce ONLY the report text as requested.
     """
     
     try:
@@ -140,6 +141,19 @@ def tool_synthesis(inputs):
             model="gemini-2.0-flash-lite",
             contents=prompt,
         )
-        return response.text
+        report_text = response.text.strip()
     except Exception as e:
         return f"Error during synthesis: {e}"
+    
+    # Programmatically build the "Sources" list in the correct order.
+    # The '##' creates a Markdown H2 heading. The '<ol>' is an ordered list.
+    sources_list_html = "\n\n## Sources\n<ol>"
+    for i, paper in enumerate(papers, 1):
+        # The id="source-i" is used by the frontend JS for smooth scrolling.
+        title = paper.get('title', 'No Title')
+        link = paper.get('link', '#')
+        sources_list_html += f'<li id="source-{i}"><a href="{link}" target="_blank">{title}</a></li>'
+    sources_list_html += "</ol>"
+    
+    # Combine the LLM-generated report with the programmatically generated list
+    return report_text + sources_list_html
