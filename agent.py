@@ -125,7 +125,11 @@ class Agent:
                     
                     if tool_name in self.tools:
                         print(f"Executing step {step_idx + 1}: {tool_name}")
-                        result = self.tools[tool_name](inputs)
+
+                        if tool_name in ["query_generator", "synthesis"]:
+                            result = self.tools[tool_name](self.client, inputs)
+                        else:
+                            result = self.tools[tool_name](inputs)
                         
                         # Store results for next steps
                         if tool_name == 'query_generator':

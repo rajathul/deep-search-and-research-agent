@@ -6,7 +6,7 @@ import xml.etree.ElementTree as ET
 from google import genai
 
 api_key = os.getenv("GOOGLE_API_KEY")
-client = genai.Client(api_key=api_key)
+# client = genai.Client(api_key=api_key)
 
 def _clean_text_for_json(text):
     """Clean text to make it JSON-safe."""
@@ -21,7 +21,7 @@ def _clean_text_for_json(text):
     text = text.encode('ascii', 'ignore').decode('ascii')  # Remove non-ASCII
     return text.strip()
 
-def tool_query_generator(inputs):
+def tool_query_generator(client, inputs):
     """Tool to generate an arXiv query from a user question."""
     user_question = inputs.get('user_question', '')
     if not user_question:
@@ -114,7 +114,7 @@ def tool_arxiv_search(inputs):
     except Exception as e:
         return f"Error parsing XML: {e}"
 
-def tool_synthesis(inputs):
+def tool_synthesis(client, inputs):
     """Tool to synthesize an answer from papers and append a formatted source list."""
     original_question = inputs.get('original_question', '')
     papers = inputs.get('papers', [])
