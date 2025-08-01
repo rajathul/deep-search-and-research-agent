@@ -116,9 +116,7 @@ def tool_synthesis(inputs):
     papers_context = ""
     for i, paper in enumerate(papers, 1):
         papers_context += f"Source [{i}]:\n"
-        papers_context += f"Title: {paper['title']}\n"
-        papers_context += f"Summary: {paper['summary']}\n"
-        papers_context += f"Link: {paper['link']}\n\n"
+        papers_context += f"Title: <a href='{paper['link']}' target='_blank'>{paper['title']}</a>\n"
         
     prompt = f"""
     You are a meticulous research analyst. Your task is to write a report that answers the user's question by synthesizing information from the provided paper summaries.
@@ -127,7 +125,7 @@ def tool_synthesis(inputs):
     1. Write a coherent, paragraph-style report that integrates the findings from the papers.
     2. For every claim or finding you take from a source, you **must** add a citation marker at the end of the sentence, like `[1]`, `[2]`, corresponding to the source number. Format the citation as a link, e.g., `[1](#source-1)`.
     3. After the report, add a heading titled "**Sources**".
-    4. Under the "Sources" heading, create a numbered list where each item has an ID that matches the citation, e.g., `<li id="source-1">`. Each item should contain the full title of the source paper and a clickable link to the paper on arXiv.
+    4. Under the "Sources" heading, create a numbered list where each item has an ID that matches the citation, e.g., `<li id="source-1">`. Each item should contain the full title of the source paper as a clickable link that opens in a new tab.
 
     Original User Question: "{original_question}"
 
