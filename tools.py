@@ -115,7 +115,7 @@ def tool_synthesis(inputs):
     
     papers_context = ""
     for i, paper in enumerate(papers, 1):
-        papers_context += f"Source [{i}]:\n"
+        papers_context += f"Source [{i}]: "
         papers_context += f"Title: <a href='{paper['link']}' target='_blank'>{paper['title']}</a>\n"
         
     prompt = f"""
