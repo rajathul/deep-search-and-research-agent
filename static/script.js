@@ -1,4 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize scientific animations
+    initScientificAnimations();
+    
+    // Add typing effect to search input
+    initSearchEffects();
+    
+    // Initialize custom number input
+    initNumberInput();
+
     // Set default date values
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('date_from').value = '2020-01-01';
@@ -50,6 +59,9 @@ document.getElementById('research-form').addEventListener('submit', async functi
             formData.append('date_from', dateFrom);
             formData.append('date_to', dateTo);
         }
+
+        const maxSources = document.getElementById('max_sources').value;
+        formData.append('max_sources', maxSources);
 
         const response = await fetch('/research', {
             method: 'POST',
@@ -184,4 +196,179 @@ function typewriterEffect(container, html) {
     
     // Start typing the first element
     setTimeout(typeNextElement, 500);
+}
+
+// Scientific Animations
+function initScientificAnimations() {
+    createFloatingParticles();
+    createDNAHelix();
+    addMouseTrackingEffect();
+}
+
+function initSearchEffects() {
+    const questionInput = document.getElementById('question');
+    const researchForm = document.getElementById('research-form');
+    
+    questionInput.addEventListener('input', () => {
+        if (questionInput.value.length > 0) {
+            researchForm.style.boxShadow = '0 0 20px rgba(186, 104, 200, 0.5)';
+            researchForm.style.transform = 'scale(1.02)';
+        } else {
+            researchForm.style.boxShadow = 'none';
+            researchForm.style.transform = 'scale(1)';
+        }
+    });
+    
+    questionInput.addEventListener('focus', () => {
+        researchForm.style.transition = 'all 0.3s ease';
+    });
+    
+    questionInput.addEventListener('blur', () => {
+        if (questionInput.value.length === 0) {
+            researchForm.style.boxShadow = 'none';
+            researchForm.style.transform = 'scale(1)';
+        }
+    });
+}
+
+function initNumberInput() {
+    const numberInput = document.getElementById('max_sources');
+    const upBtn = document.querySelector('.number-up');
+    const downBtn = document.querySelector('.number-down');
+    
+    const min = parseInt(numberInput.getAttribute('min'));
+    const max = parseInt(numberInput.getAttribute('max'));
+    
+    function updateValue(newValue) {
+        if (newValue >= min && newValue <= max) {
+            numberInput.value = newValue;
+            
+            // Add a subtle animation effect
+            numberInput.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                numberInput.style.transform = 'scale(1)';
+            }, 150);
+        }
+    }
+    
+    upBtn.addEventListener('click', () => {
+        const currentValue = parseInt(numberInput.value);
+        updateValue(currentValue + 1);
+    });
+    
+    downBtn.addEventListener('click', () => {
+        const currentValue = parseInt(numberInput.value);
+        updateValue(currentValue - 1);
+    });
+    
+    // Add keyboard support
+    numberInput.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            const currentValue = parseInt(numberInput.value);
+            updateValue(currentValue + 1);
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            const currentValue = parseInt(numberInput.value);
+            updateValue(currentValue - 1);
+        }
+    });
+    
+    // Add smooth transition for the input
+    numberInput.style.transition = 'transform 0.15s ease';
+}
+
+function createFloatingParticles() {
+    const particlesContainer = document.createElement('div');
+    particlesContainer.className = 'particles';
+    document.body.appendChild(particlesContainer);
+
+    // Create 20 particles
+    for (let i = 0; i < 20; i++) {
+        setTimeout(() => {
+            createParticle(particlesContainer);
+        }, i * 800); // Stagger particle creation
+    }
+
+    // Continue creating particles every 3 seconds
+    setInterval(() => {
+        createParticle(particlesContainer);
+    }, 3000);
+}
+
+function createParticle(container) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    
+    // Random size between 2-6px
+    const size = Math.random() * 4 + 2;
+    particle.style.width = size + 'px';
+    particle.style.height = size + 'px';
+    
+    // Random horizontal position
+    particle.style.left = Math.random() * 100 + '%';
+    
+    // Random animation duration between 15-30s
+    const duration = Math.random() * 15 + 15;
+    particle.style.animationDuration = duration + 's';
+    
+    container.appendChild(particle);
+    
+    // Remove particle after animation completes
+    setTimeout(() => {
+        if (particle.parentNode) {
+            particle.parentNode.removeChild(particle);
+        }
+    }, duration * 1000);
+}
+
+function createDNAHelix() {
+    const dnaHelix = document.createElement('div');
+    dnaHelix.className = 'dna-helix';
+    
+    // Create two DNA strands
+    for (let i = 0; i < 2; i++) {
+        const strand = document.createElement('div');
+        strand.className = 'dna-strand';
+        dnaHelix.appendChild(strand);
+    }
+    
+    // Create DNA base pairs
+    for (let i = 0; i < 20; i++) {
+        const base = document.createElement('div');
+        base.className = 'dna-base';
+        base.style.top = (i * 20) + 'px';
+        base.style.animationDelay = (i * 0.1) + 's';
+        dnaHelix.appendChild(base);
+    }
+    
+    document.body.appendChild(dnaHelix);
+}
+
+function addMouseTrackingEffect() {
+    const card = document.querySelector('.card');
+    
+    card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        const deltaX = (x - centerX) / centerX;
+        const deltaY = (y - centerY) / centerY;
+        
+        // Much more subtle rotation - reduced from 5 to 1.5
+        const rotateX = deltaY * 1.5;
+        const rotateY = deltaX * 1.5;
+        
+        card.style.transform = `perspective(2000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(2px)`;
+        card.style.transition = 'transform 0.1s ease-out';
+    });
+    
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(2000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+        card.style.transition = 'transform 0.3s ease-out';
+    });
 }

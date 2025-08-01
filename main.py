@@ -21,13 +21,20 @@ async def read_root(request: Request):
 async def research(
     question: str = Form(...),
     date_from: str = Form(None),
-    date_to: str = Form(None)
+    date_to: str = Form(None),
+    max_sources: int = Form(5)
 ):
     if not question:
         return JSONResponse(content={'error': 'No question provided'}, status_code=400)
 
+    # Validate max_sources range
+    if max_sources < 5:
+        max_sources = 5
+    elif max_sources > 15:
+        max_sources = 15
+
     agent = Agent()
-    answer = agent.run(question, date_from=date_from, date_to=date_to)
+    answer = agent.run(question, date_from=date_from, date_to=date_to, max_sources=max_sources)
     return JSONResponse(content={'answer': answer})
 
 if __name__ == "__main__":

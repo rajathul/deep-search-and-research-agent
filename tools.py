@@ -1,10 +1,12 @@
 import re
+import os
 import urllib.request
 import urllib.parse
 import xml.etree.ElementTree as ET
 from google import genai
 
-client = genai.Client()
+api_key = os.getenv("GOOGLE_API_KEY")
+client = genai.Client(api_key=api_key)
 
 def _clean_text_for_json(text):
     """Clean text to make it JSON-safe."""

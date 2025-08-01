@@ -13,12 +13,114 @@ body {
     justify-content: center;
     align-items: flex-start;
     min-height: 100vh;
-    padding: 2rem;
+    padding: 1rem; /* Reduced from 2rem to 1rem */
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Scientific Particle Animation */
+.particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.particle {
+    position: absolute;
+    background: rgba(186, 104, 200, 0.6);
+    border-radius: 50%;
+    animation: float 15s infinite linear;
+}
+
+.particle:nth-child(odd) {
+    background: rgba(156, 39, 176, 0.4);
+    animation-duration: 20s;
+}
+
+.particle:nth-child(3n) {
+    background: rgba(255, 255, 255, 0.3);
+    animation-duration: 25s;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* DNA Helix Animation */
+.dna-helix {
+    position: fixed;
+    top: 50%;
+    right: -100px;
+    transform: translateY(-50%);
+    width: 200px;
+    height: 400px;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.1;
+}
+
+.dna-strand {
+    position: absolute;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, #ba68c8, #9c27b0);
+    border-radius: 2px;
+    animation: dnaRotate 8s infinite linear;
+}
+
+.dna-strand:nth-child(1) {
+    left: 20px;
+    animation-delay: 0s;
+}
+
+.dna-strand:nth-child(2) {
+    right: 20px;
+    animation-delay: -2s;
+}
+
+.dna-base {
+    position: absolute;
+    width: 60px;
+    height: 2px;
+    background: rgba(186, 104, 200, 0.6);
+    left: 50%;
+    transform: translateX(-50%);
+    animation: dnaBase 8s infinite linear;
+}
+
+@keyframes dnaRotate {
+    0% { transform: rotateY(0deg); }
+    100% { transform: rotateY(360deg); }
+}
+
+@keyframes dnaBase {
+    0%, 100% { transform: translateX(-50%) rotateZ(0deg); }
+    25% { transform: translateX(-50%) rotateZ(45deg); }
+    50% { transform: translateX(-50%) rotateZ(90deg); }
+    75% { transform: translateX(-50%) rotateZ(135deg); }
 }
 
 .main-container {
     width: 100%;
-    max-width: 800px;
+    max-width: 1200px; /* Increased from 800px to 1200px */
+    padding: 0 1rem; /* Add some padding for edge spacing */
 }
 
 .card {
@@ -28,17 +130,86 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.2);
     padding: 2rem 2.5rem;
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: cardPulse 4s ease-in-out infinite;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+}
+
+@keyframes cardPulse {
+    0%, 100% {
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+    50% {
+        box-shadow: 0 8px 32px 0 rgba(156, 39, 176, 0.2);
+    }
+}
+
+/* Molecular structure decoration */
+.card::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 40px;
+    height: 40px;
+    background: radial-gradient(circle, rgba(186, 104, 200, 0.3) 2px, transparent 2px);
+    background-size: 10px 10px;
+    border-radius: 50%;
+    animation: moleculeRotate 10s infinite linear;
+    z-index: -1;
+}
+
+@keyframes moleculeRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 .card-header {
     text-align: center;
     margin-bottom: 2rem;
+    position: relative;
 }
 
 .card-header h1 {
     font-weight: 600;
     font-size: 2.5rem;
     margin-bottom: 0.5rem;
+    background: linear-gradient(45deg, #f0f2f5, #ba68c8, #f0f2f5);
+    background-size: 200% 200%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: textShimmer 3s ease-in-out infinite;
+}
+
+@keyframes textShimmer {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* Atom symbol decoration */
+.card-header::after {
+    content: '⚛';
+    position: absolute;
+    top: -10px;
+    right: 20%;
+    font-size: 1.5rem;
+    color: rgba(186, 104, 200, 0.7);
+    animation: atomSpin 6s infinite linear;
+}
+
+@keyframes atomSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 .card-header p {
@@ -50,6 +221,17 @@ body {
     display: flex;
     gap: 1rem;
     margin-bottom: 2rem;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    padding: 0.5rem;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.main-search {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    min-width: 0; /* Allow flex items to shrink */
 }
 
 #question {
@@ -73,7 +255,7 @@ body {
 }
 
 #research-form button {
-    background: #9c27b0;
+    background: linear-gradient(45deg, #9c27b0, #ba68c8);
     border: none;
     border-radius: 8px;
     padding: 0.75rem 1.5rem;
@@ -82,11 +264,36 @@ body {
     font-weight: 600;
     font-size: 1rem;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#research-form button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
 }
 
 #research-form button:hover {
-    background: #7b1fa2;
+    background: linear-gradient(45deg, #7b1fa2, #9c27b0);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(156, 39, 176, 0.4);
+}
+
+#research-form button:hover::before {
+    left: 100%;
+}
+
+#research-form button:active {
+    transform: translateY(0px);
 }
 
 /* Custom Loader Styles */
@@ -96,28 +303,76 @@ body {
     align-items: center;
     justify-content: center;
     padding: 2rem;
+    position: relative;
 }
 
 .loader {
     display: flex;
     gap: 10px;
     margin-bottom: 1rem;
+    position: relative;
 }
 
 .circle {
     width: 15px;
     height: 15px;
-    background-color: #f0f2f5;
+    background: linear-gradient(45deg, #ba68c8, #9c27b0);
     border-radius: 50%;
-    animation: bounce 1.4s infinite ease-in-out both;
+    animation: bounce 1.4s infinite ease-in-out both, glow 2s infinite ease-in-out;
+    position: relative;
+}
+
+.circle::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    animation: innerPulse 1.4s infinite ease-in-out;
 }
 
 .circle:nth-child(1) { animation-delay: -0.32s; }
 .circle:nth-child(2) { animation-delay: -0.16s; }
+.circle:nth-child(3) { animation-delay: 0s; }
 
 @keyframes bounce {
     0%, 80%, 100% { transform: scale(0); }
     40% { transform: scale(1.0); }
+}
+
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(186, 104, 200, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(186, 104, 200, 0.8);
+    }
+}
+
+@keyframes innerPulse {
+    0%, 80%, 100% { opacity: 0; }
+    40% { opacity: 1; }
+}
+
+/* Scientific symbols around loader */
+#loading::before {
+    content: '🧬 ⚗️ 🔬 📊 🧪';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.2rem;
+    opacity: 0.6;
+    animation: symbolFloat 8s infinite ease-in-out;
+}
+
+@keyframes symbolFloat {
+    0%, 100% { transform: translateX(-50%) translateY(0px); }
+    50% { transform: translateX(-50%) translateY(-10px); }
 }
 
 .loading-text {
@@ -131,6 +386,8 @@ body {
     border-radius: 8px;
     padding: 1.5rem 2rem;
     line-height: 1.8;
+    max-width: 100%;
+    word-wrap: break-word;
 }
 
 #results-container h2 {
@@ -331,6 +588,81 @@ body {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* Specific styling for number input */
+.date-range input[type="number"] {
+    appearance: textfield; /* Standard */
+    -moz-appearance: textfield; /* Firefox */
+}
+
+.date-range input[type="number"]::-webkit-outer-spin-button,
+.date-range input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Custom Number Input Container */
+.number-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.number-input-container input[type="number"] {
+    padding-right: 1.8rem; /* Reduced space for smaller buttons */
+    cursor: default;
+}
+
+.number-controls {
+    position: absolute;
+    right: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 6px);
+}
+
+.number-btn {
+    background: linear-gradient(45deg, #9c27b0, #ba68c8);
+    border: none;
+    color: #fff;
+    width: 14px; /* Reduced from 20px to 14px */
+    height: 50%;
+    font-size: 6px; /* Reduced from 8px to 6px */
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: monospace;
+    font-weight: bold;
+}
+
+.number-up {
+    border-radius: 0 3px 0 0; /* Reduced border radius */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.number-down {
+    border-radius: 0 0 3px 0; /* Reduced border radius */
+}
+
+.number-btn:hover {
+    background: linear-gradient(45deg, #7b1fa2, #9c27b0);
+    transform: scale(1.1);
+}
+
+.number-btn:active {
+    transform: scale(0.95);
+    background: linear-gradient(45deg, #6a1b9a, #8e24aa);
+}
+
+.number-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(156, 39, 176, 0.5);
+}
+
 .date-range input:focus {
     outline: none;
     border-color: #9c27b0;
@@ -350,5 +682,43 @@ body {
     .date-range input {
         padding: 0.6rem 0.8rem;
         font-size: 1rem;
+    }
+    
+    /* Mobile adjustments */
+    body {
+        padding: 0.5rem;
+    }
+    
+    .main-container {
+        max-width: 100%;
+        padding: 0;
+    }
+    
+    .card {
+        padding: 1.5rem;
+    }
+}
+
+/* Responsive design for different screen sizes */
+@media (min-width: 1400px) {
+    .main-container {
+        max-width: 1400px; /* Even larger on very wide screens */
+    }
+}
+
+@media (min-width: 1800px) {
+    .main-container {
+        max-width: 1600px; /* Maximum comfortable reading width */
+    }
+    
+    .card {
+        padding: 3rem 4rem; /* More padding on very large screens */
+    }
+}
+
+/* Tablet adjustments */
+@media (min-width: 601px) and (max-width: 1024px) {
+    .main-container {
+        max-width: 95%; /* Use most of the screen on tablets */
     }
 }

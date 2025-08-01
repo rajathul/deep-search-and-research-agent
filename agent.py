@@ -28,7 +28,7 @@ class Agent:
         
         IMPORTANT: You should complete the entire research process in a single response. Plan your approach:
         1. Generate an arXiv query from the user's question
-        2. Search arXiv using that query
+        2. Search arXiv using that query (use the specified max_results value)
         3. Synthesize the results into a comprehensive answer
         
         Respond ONLY with a single valid JSON object that contains your complete plan:
@@ -66,7 +66,7 @@ class Agent:
         """Add a new tool to the agent dynamically."""
         self.tools[name] = function
 
-    def run(self, user_question, date_from=None, date_to=None):
+    def run(self, user_question, date_from=None, date_to=None, max_sources=5):
         """Run the agent to process the user's question."""
         
         for iteration in range(1, self.max_iterations + 1):
@@ -76,8 +76,11 @@ class Agent:
                 date_context = ""
                 if date_from and date_to:
                     date_context = f'\nIMPORTANT: The user has specified a date range. You MUST include date_from: "{date_from}" and date_to: "{date_to}" in the arxiv_search tool inputs.'
+                
+                sources_context = f'\nIMPORTANT: The user wants {max_sources} sources. You MUST set max_results: {max_sources} in the arxiv_search tool inputs.'
+                
                 # Get execution plan from LLM
-                plan_prompt = self.system_prompt + f'\n\nUser Question: "{user_question}"'
+                plan_prompt = self.system_prompt + f'\n\nUser Question: "{user_question}"' + date_context + sources_context
                 response = self.client.models.generate_content(
                     model=self.model,
                     contents=plan_prompt
