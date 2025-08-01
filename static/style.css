@@ -1,0 +1,39 @@
+body {
+    background-color: #f0f2f5;
+    color: #333;
+}
+
+.container {
+    max-width: 800px;
+}
+
+.display-4 {
+    font-weight: 300;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+#results-container {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.highlight {
+    background-color: #e7f1ff;
+    transition: background-color 0.5s ease;
+}
+
+.citation-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.citation-link:hover {
+    text-decoration: underline;
+}
