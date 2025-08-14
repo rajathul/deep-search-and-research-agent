@@ -709,6 +709,35 @@ body {
         margin-right: 0.5rem;
         font-size: 1rem;
     }
+
+    /* Mobile toggle adjustments */
+    .toggle-label {
+        gap: 0.8rem;
+    }
+    
+    .mode-text, .mode-text-right {
+        font-size: 0.8rem;
+        min-width: 70px;
+    }
+    
+    .toggle-slider {
+        width: 50px;
+        height: 26px;
+    }
+    
+    .toggle-button {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .toggle-input:checked + .toggle-slider .toggle-button {
+        transform: translateX(24px);
+    }
+    
+    .mode-description {
+        font-size: 0.75rem;
+        text-align: center;
+    }
 }
 
 /* Responsive design for different screen sizes */
@@ -799,4 +828,114 @@ body {
         transform: scale(1.1);
         opacity: 0.8;
     }
+}
+
+/* Research Mode Toggle */
+.research-mode-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    width: 100%;
+}
+
+.toggle-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.mode-text {
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    min-width: 80px;
+    text-align: center;
+}
+
+.mode-text-right {
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    min-width: 100px;
+    text-align: center;
+}
+
+.toggle-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.toggle-input {
+    display: none;
+}
+
+.toggle-slider {
+    position: relative;
+    width: 60px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.toggle-button {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-input:checked + .toggle-slider {
+    background: linear-gradient(135deg, #4a148c, #6a1b9a);
+    border-color: rgba(106, 27, 154, 0.5);
+}
+
+.toggle-input:checked + .toggle-slider .toggle-button {
+    transform: translateX(30px);
+    background: linear-gradient(135deg, #6a1b9a, #8e24aa);
+    box-shadow: 0 2px 8px rgba(106, 27, 154, 0.4);
+}
+
+.mode-description {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    transition: all 0.3s ease;
+    font-style: italic;
+}
+
+/* Toggle states */
+.toggle-input:checked ~ .mode-text {
+    opacity: 0.6;
+}
+
+.toggle-input:checked ~ .mode-text-right {
+    opacity: 1;
+    color: #ba68c8;
+    font-weight: 600;
+}
+
+.toggle-input:not(:checked) ~ .mode-text {
+    opacity: 1;
+    color: #ff9800;
+    font-weight: 600;
+}
+
+.toggle-input:not(:checked) ~ .mode-text-right {
+    opacity: 0.6;
 }

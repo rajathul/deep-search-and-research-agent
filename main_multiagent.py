@@ -4,6 +4,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from planner_agent import PlannerAgent
+from planner_agent_deep_research import PlannerAgentDeepResearch
 import uvicorn
 import traceback
 
@@ -17,6 +18,7 @@ templates = Jinja2Templates(directory="templates")
 
 # Initialize agents 
 planner_agent = PlannerAgent()
+planner_agent_deep_research = PlannerAgentDeepResearch()
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
@@ -26,11 +28,17 @@ async def read_root(request: Request):
 @app.get("/health")
 async def health_check():
     """Health check endpoint."""
-    return {"status": "healthy", "version": "2.0", "agents": ["planner", "arxiv", "youtube", "synthesizer"]}
+    return {
+        "status": "healthy", 
+        "version": "2.0", 
+        "modes": ["deep_search", "deep_research"],
+        "agents": ["planner", "planner_deep_research", "arxiv", "youtube", "synthesizer", "decomposition"]
+    }
 
 @app.post("/research") 
 async def research(
     question: str = Form(...),
+    research_mode: str = Form("deep_search"),
     date_from: str = Form(None),
     date_to: str = Form(None),
     max_sources: int = Form(5)
@@ -46,17 +54,30 @@ async def research(
         max_sources = 10
     
     try:
-        # Use the planner agent to intelligently decide strategy
-        answer = planner_agent.run(
-            user_question=question,
-            max_sources=max_sources,
-            date_from=date_from,
-            date_to=date_to,
-            transcript_limit=3000
-        )
+        # Choose the appropriate planner based on research mode
+        if research_mode == "deep_research":
+            print(f"Using Deep Research mode for: {question}")
+            answer = planner_agent_deep_research.run(
+                user_question=question,
+                max_sources=max_sources,
+                date_from=date_from,
+                date_to=date_to,
+                transcript_limit=3000
+            )
+        else:
+            print(f"Using Deep Search mode for: {question}")
+            answer = planner_agent.run(
+                user_question=question,
+                max_sources=max_sources,
+                date_from=date_from,
+                date_to=date_to,
+                transcript_limit=3000
+            )
+        
         return JSONResponse(content={'answer': answer})
     except Exception as e:
-        print(f"Intelligent research failed: {e}")
+        print(f"Research failed: {e}")
+        print(f"Traceback: {traceback.format_exc()}")
         return JSONResponse(content={'error': f'Research failed: {str(e)}'}, status_code=500)
 
 if __name__ == "__main__":

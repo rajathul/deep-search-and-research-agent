@@ -10,7 +10,7 @@ class YoutubeAgent(BaseAgent):
     
     def __init__(self):
         super().__init__("YouTube Agent")
-        self.youtube_api_key = os.getenv("GOOGLE_API_KEY")  # Same key for YouTube API
+        self.youtube_api_key = os.getenv("GOOGLE_API_KEY")
         if not self.youtube_api_key:
             raise ValueError("YouTube API key not found")
     

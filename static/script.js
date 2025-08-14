@@ -15,6 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     console.log('Multi-Agent Research System initialized');
 
+    // Initialize deep research toggle
+    initDeepResearchToggle();
+
     // Toggle advanced options visibility
     const toggleLink = document.getElementById('advanced-toggle');
     const advancedOptions = document.getElementById('advanced-options');
@@ -25,6 +28,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+function initDeepResearchToggle() {
+    const toggle = document.getElementById('deep-research-toggle');
+    const modeDescription = document.getElementById('mode-description');
+    
+    toggle.addEventListener('change', function() {
+        if (this.checked) {
+            modeDescription.textContent = 'Comprehensive multi-step research with question decomposition';
+            console.log('Deep Research mode enabled');
+        } else {
+            modeDescription.textContent = 'Quick intelligent search across sources';
+            console.log('Deep Search mode enabled');
+        }
+    });
+}
+
 document.getElementById('research-form').addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -33,36 +51,49 @@ document.getElementById('research-form').addEventListener('submit', async functi
     const loadingText = document.getElementById('loading-text');
     const resultsContainer = document.getElementById('results-container');
     const form = document.getElementById('research-form');
+    const isDeepResearch = document.getElementById('deep-research-toggle').checked;
 
-    console.log('=== INTELLIGENT RESEARCH SUBMISSION ===');
+    console.log('=== RESEARCH SUBMISSION ===');
     console.log('Question:', question);
-    console.log('AI will automatically select best sources');
+    console.log('Mode:', isDeepResearch ? 'Deep Research' : 'Deep Search');
     console.log('====================================');
     
     form.style.display = 'none';
     resultsContainer.innerHTML = '';
     loading.style.display = 'flex';
 
-    // Intelligent loading messages
-    const loadingMessages = [
-        "Analyzing your question...",
-        "AI selecting optimal research strategy...",
-        "Searching across academic papers...",
-        "Scanning video content...",
-        "Processing transcripts and abstracts...",
-        "Synthesizing comprehensive report..."
-    ];
+    // Different loading messages based on research mode
+    let loadingMessages;
+    if (isDeepResearch) {
+        loadingMessages = [
+            "Breaking down your question into sub-questions...",
+            "Analyzing research strategy for each component...",
+            "Searching academic papers and videos...",
+            "Processing transcripts and abstracts...",
+            "Synthesizing comprehensive deep research report..."
+        ];
+    } else {
+        loadingMessages = [
+            "Analyzing your question...",
+            "AI selecting optimal research strategy...",
+            "Searching across academic papers...",
+            "Scanning video content...",
+            "Processing transcripts and abstracts...",
+            "Synthesizing comprehensive report..."
+        ];
+    }
     
     let messageIndex = 0;
     loadingText.textContent = loadingMessages[messageIndex];
     const textInterval = setInterval(() => {
         messageIndex = (messageIndex + 1) % loadingMessages.length;
         loadingText.textContent = loadingMessages[messageIndex];
-    }, 2500);
+    }, 3000); // Slightly longer for deep research messages
 
     try {
         const formData = new FormData();
         formData.append('question', question);
+        formData.append('research_mode', isDeepResearch ? 'deep_research' : 'deep_search');
 
         const dateFrom = document.getElementById('date_from').value;
         const dateTo = document.getElementById('date_to').value;
@@ -89,22 +120,34 @@ document.getElementById('research-form').addEventListener('submit', async functi
               breaks: true,
             });
 
-            // Handle the planner agent response structure
+            // Handle the response structure
             let html = '';
             if (data.answer && data.answer.result) {
                 // The planner returns {result: "synthesized report", strategy: {...}, agent: "Planner Agent"}
                 html = marked.parse(data.answer.result);
                 
-                // Add strategy information
+                // Add strategy information for both modes
                 if (data.answer.strategy) {
                     const strategy = data.answer.strategy;
-                    const strategyInfo = `
+                    let strategyInfo = `
                         <div class="strategy-info" style="background: rgba(74, 20, 140, 0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid #6a1b9a;">
                             <h4><i class="fas fa-brain"></i> AI Research Strategy</h4>
+                            <p><strong>Mode:</strong> ${isDeepResearch ? 'Deep Research' : 'Deep Search'}</p>
                             <p><strong>Reasoning:</strong> ${strategy.reasoning}</p>
-                            <p><strong>Sources Used:</strong> ${strategy.use_arxiv ? 'ArXiv' : ''} ${strategy.use_arxiv && strategy.use_youtube ? '+ ' : ''}${strategy.use_youtube ? 'YouTube' : ''}</p>
-                        </div>
-                    `;
+                            <p><strong>Sources Used:</strong> ${strategy.use_arxiv ? 'ArXiv' : ''} ${strategy.use_arxiv && strategy.use_youtube ? '+ ' : ''}${strategy.use_youtube ? 'YouTube' : ''}</p>`;
+                    
+                    // Add decomposition info for deep research
+                    if (isDeepResearch && data.answer.sub_questions) {
+                        strategyInfo += `<p><strong>Sub-questions researched:</strong> ${data.answer.sub_questions.length} components</p>`;
+                        strategyInfo += `<details style="margin-top: 0.5rem;"><summary style="cursor: pointer; font-weight: 500;">View Research Components</summary>`;
+                        strategyInfo += `<ul style="margin-top: 0.5rem; padding-left: 1.5rem;">`;
+                        data.answer.sub_questions.forEach((sq, idx) => {
+                            strategyInfo += `<li style="margin-bottom: 0.25rem;">${sq}</li>`;
+                        });
+                        strategyInfo += `</ul></details>`;
+                    }
+                    
+                    strategyInfo += `</div>`;
                     html = strategyInfo + html;
                 }
             } else if (typeof data.answer === 'string') {

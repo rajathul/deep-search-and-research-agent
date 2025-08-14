@@ -1,24 +1,39 @@
 # Multi-Agent Research System
 
-An intelligent AI-powered research assistant that automatically selects the best sources and strategies for answering your questions using ArXiv papers and YouTube videos.
+An intelligent AI-powered research assistant with **dual research modes** that automatically selects the best sources and strategies for answering your questions using ArXiv papers and YouTube videos.
 
 ## 🌟 Features
 
-- **🧠 Intelligent Planning**: AI automatically analyzes your question and selects the optimal research strategy
+- **🧠 Dual Research Modes**: 
+  - **Deep Search**: Quick intelligent research across sources
+  - **Deep Research**: Comprehensive multi-step analysis with question decomposition
 - **📚 ArXiv Integration**: Searches academic papers with smart query generation
 - **🎥 YouTube Integration**: Analyzes video transcripts for recent trends and tutorials  
 - **🔗 Smart Synthesis**: Combines information from multiple sources with proper citations
-- **🎯 Adaptive Strategy**: Chooses between ArXiv, YouTube, or both based on your question
+- **🎯 Adaptive Strategy**: AI chooses between ArXiv, YouTube, or both based on your question
 - **📊 Real-time Processing**: Live updates and intelligent loading messages
+- **🔄 Toggle Interface**: Easy switching between research modes
 
 ## 🏗️ Architecture
 
+### Research Modes
+
+#### Deep Search Mode
+- **PlannerAgent**: Fast strategy selection and execution
+- **SynthesizerAgent**: Quick synthesis with citations
+
+#### Deep Research Mode  
+- **PlannerAgentDeepResearch**: Advanced multi-step research coordination
+- **DecompositionAgent**: Breaks complex questions into sub-questions
+- **SynthesizerAgentDeepResearch**: Comprehensive report generation with structured format
+
 ### Core Agents
 
-1. **PlannerAgent**: Master coordinator that analyzes queries and manages research strategy
+1. **PlannerAgent / PlannerAgentDeepResearch**: Master coordinators that analyze queries and manage research strategy
 2. **ArxivAgent**: Specialized for searching and processing academic papers
 3. **YoutubeAgent**: Handles video search and transcript extraction
-4. **SynthesizerAgent**: Combines and synthesizes information from all sources
+4. **SynthesizerAgent / SynthesizerAgentDeepResearch**: Combines and synthesizes information from all sources
+5. **DecompositionAgent**: Breaks down complex questions (Deep Research only)
 
 ### Key Design Principles
 
@@ -26,6 +41,7 @@ An intelligent AI-powered research assistant that automatically selects the best
 - **Intelligent**: AI decides the best approach for each query
 - **Extensible**: Easy to add new data sources
 - **Robust**: Comprehensive error handling
+- **Dual-Mode**: Flexible research depth based on user needs
 
 ## 🚀 Quick Start
 
@@ -80,32 +96,57 @@ python main_multiagent.py
 
 ## 🎯 How It Works
 
-### 1. Query Analysis
-The PlannerAgent analyzes your question to determine:
+### Research Mode Selection
+Use the toggle in the interface to choose your research approach:
+
+#### 🔍 Deep Search Mode (Default)
+- **Fast & Efficient**: Quick intelligent research
+- **Direct Analysis**: Analyzes your question and selects optimal sources
+- **Streamlined**: Searches ArXiv and/or YouTube based on query type
+- **Quick Synthesis**: Combines findings with citations
+
+#### 🔬 Deep Research Mode  
+- **Comprehensive**: Multi-step research process
+- **Question Decomposition**: Breaks complex questions into sub-questions
+- **Thorough Investigation**: Researches each component separately
+- **Structured Reports**: Executive summary, findings, and conclusions
+- **Enhanced Synthesis**: Holistic analysis across all sub-components
+
+### 1. Query Analysis (Both Modes)
+The system analyzes your question to determine:
 - Whether academic papers are needed (ArXiv)
 - Whether recent trends/tutorials are needed (YouTube)
 - Complexity level and recency requirements
 
-### 2. Intelligent Source Selection
-Based on the analysis, the system automatically:
-- Searches ArXiv for academic papers
-- Searches YouTube for videos and extracts transcripts
-- Or uses both sources for comprehensive coverage
+### 2. Research Execution
 
-### 3. Smart Synthesis
+#### Deep Search Mode:
+- Searches ArXiv for academic papers
+- Searches YouTube for videos and extracts transcripts  
+- Uses selected sources for comprehensive coverage
+
+#### Deep Research Mode:
+- **Step 1**: Decomposes question into 3-5 sub-questions
+- **Step 2**: Researches each sub-question independently
+- **Step 3**: Aggregates sources from all sub-question research
+- **Step 4**: Creates comprehensive synthesis
+
+### 3. Smart Synthesis (Both Modes)
 The SynthesizerAgent:
 - Combines information from all sources
 - Adds proper citations [1], [2], etc.
-- Creates a coherent, well-structured report
+- Creates coherent, well-structured reports
+- **Deep Research**: Uses structured format with Executive Summary, Key Findings, and Conclusions
 
 ## 📝 Example Queries
 
 The system excels at various types of research questions:
 
 - **Academic**: "What are the latest developments in transformer models?"
-- **Technical**: "How do diffusion models work for image generation?"
+- **Technical**: "How do diffusion models work for image generation?"  
 - **Practical**: "Best practices for fine-tuning large language models"
 - **Comparative**: "Differences between BERT and GPT architectures"
+- **Complex** (Deep Research): "What are the implications of quantum computing for machine learning?"
 
 ## 🛠️ API Endpoints
 
@@ -116,6 +157,7 @@ The system excels at various types of research questions:
 ### Research Parameters
 
 - `question` (required): Your research question
+- `research_mode` (optional): "deep_search" (default) or "deep_research"
 - `max_sources` (optional): Maximum sources to retrieve (1-10, default: 5)
 - `date_from` (optional): Filter ArXiv papers from this date
 - `date_to` (optional): Filter ArXiv papers to this date
@@ -142,6 +184,10 @@ Each agent can be customized by modifying their respective files:
 Run the system test to verify everything is working:
 
 ```bash
+# Test both research modes
+python test_both_modes.py
+
+# Or test basic functionality
 python test_system.py
 ```
 
