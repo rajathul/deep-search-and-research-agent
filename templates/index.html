@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deep Research Agent</title>
+    <title>Multi-Agent Research System</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
@@ -14,14 +15,21 @@
     <div class="main-container">
         <div class="card">
             <div class="card-header">
-                <h1>Deep Research Agent</h1>
-                <p>Your AI-powered research assistant for arXiv</p>
+                <h1>Multi-Agent Research System</h1>
+                <p>AI-powered intelligent research with automatic source selection</p>
             </div>
 
             <form id="research-form">
+                <div class="ai-selector">
+                    <div class="ai-badge">
+                        <i class="fas fa-brain"></i>
+                        <span>AI automatically selects the best sources</span>
+                    </div>
+                </div>
+
                 <div class="main-search">
                     <input type="text" id="question" class="form-control" placeholder="e.g., How are diffusion models used for LLMs?" required>
-                    <button type="submit">Research</button>
+                    <button type="submit" id="submit-btn">Intelligent Research</button>
                 </div>
 
                 <div class="advanced-container">
@@ -38,7 +46,7 @@
                         <div class="date-range">
                             <label for="max_sources">Sources:</label>
                             <div class="number-input-container">
-                                <input type="number" id="max_sources" name="max_sources" min="5" max="15" value="5" readonly>
+                                <input type="number" id="max_sources" name="max_sources" min="3" max="10" value="5" readonly>
                                 <div class="number-controls">
                                     <button type="button" class="number-btn number-up" aria-label="Increase sources">▲</button>
                                     <button type="button" class="number-btn number-down" aria-label="Decrease sources">▼</button>

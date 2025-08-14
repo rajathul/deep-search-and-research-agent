@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('date_from').value = '2020-01-01';
     document.getElementById('date_to').value = today;
 
+    console.log('Multi-Agent Research System initialized');
+
     // Toggle advanced options visibility
     const toggleLink = document.getElementById('advanced-toggle');
     const advancedOptions = document.getElementById('advanced-options');
@@ -31,17 +33,26 @@ document.getElementById('research-form').addEventListener('submit', async functi
     const loadingText = document.getElementById('loading-text');
     const resultsContainer = document.getElementById('results-container');
     const form = document.getElementById('research-form');
+
+    console.log('=== INTELLIGENT RESEARCH SUBMISSION ===');
+    console.log('Question:', question);
+    console.log('AI will automatically select best sources');
+    console.log('====================================');
     
     form.style.display = 'none';
     resultsContainer.innerHTML = '';
     loading.style.display = 'flex';
 
+    // Intelligent loading messages
     const loadingMessages = [
-        "Generating arXiv query...",
-        "Searching for relevant papers...",
-        "Analyzing research findings...",
-        "Synthesizing your report..."
+        "Analyzing your question...",
+        "AI selecting optimal research strategy...",
+        "Searching across academic papers...",
+        "Scanning video content...",
+        "Processing transcripts and abstracts...",
+        "Synthesizing comprehensive report..."
     ];
+    
     let messageIndex = 0;
     loadingText.textContent = loadingMessages[messageIndex];
     const textInterval = setInterval(() => {
@@ -78,8 +89,32 @@ document.getElementById('research-form').addEventListener('submit', async functi
               breaks: true,
             });
 
-            let html = marked.parse(data.answer);
+            // Handle the planner agent response structure
+            let html = '';
+            if (data.answer && data.answer.result) {
+                // The planner returns {result: "synthesized report", strategy: {...}, agent: "Planner Agent"}
+                html = marked.parse(data.answer.result);
+                
+                // Add strategy information
+                if (data.answer.strategy) {
+                    const strategy = data.answer.strategy;
+                    const strategyInfo = `
+                        <div class="strategy-info" style="background: rgba(74, 20, 140, 0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid #6a1b9a;">
+                            <h4><i class="fas fa-brain"></i> AI Research Strategy</h4>
+                            <p><strong>Reasoning:</strong> ${strategy.reasoning}</p>
+                            <p><strong>Sources Used:</strong> ${strategy.use_arxiv ? 'ArXiv' : ''} ${strategy.use_arxiv && strategy.use_youtube ? '+ ' : ''}${strategy.use_youtube ? 'YouTube' : ''}</p>
+                        </div>
+                    `;
+                    html = strategyInfo + html;
+                }
+            } else if (typeof data.answer === 'string') {
+                // Fallback for direct string response
+                html = marked.parse(data.answer);
+            } else {
+                html = '<div class="alert alert-warning">No results found</div>';
+            }
 
+            // Process citations
             html = html.replace(/\[([\d,\s]+)\]/g, (match, innerContent) => {
                 const links = innerContent.split(',')
                     .map(num => num.trim())
@@ -88,7 +123,6 @@ document.getElementById('research-form').addEventListener('submit', async functi
                 return `[${links}]`;
             });
 
-            // Apply typewriter effect to the content
             typewriterEffect(resultsContainer, html);
         }
     } catch (error) {
@@ -97,7 +131,7 @@ document.getElementById('research-form').addEventListener('submit', async functi
         clearInterval(textInterval);
         loading.style.display = 'none';
         form.style.display = 'flex';
-        document.getElementById('question').value = '';
+        // Don't clear the question to allow for follow-up searches
     }
 });
 
