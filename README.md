@@ -156,4 +156,5 @@ To extend the system:
 
 ## Acknowledgements
 Thank you to **arXiv** for use of its open access interoperability.
+
 This application uses the official **YouTube Data API** to fetch and display video information. By using this service, you are bound by the **YouTube Terms of Service**.
