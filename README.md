@@ -145,30 +145,6 @@ Run the system test to verify everything is working:
 python test_system.py
 ```
 
-## 📊 Monitoring
-
-The system provides real-time feedback:
-- Query analysis results
-- Source selection reasoning
-- Processing status updates
-- Error handling and recovery
-
-## 🚨 Troubleshooting
-
-### Common Issues
-
-1. **API Key Error**: Ensure `GOOGLE_API_KEY` is set correctly
-2. **No Results**: Check internet connection and API key validity
-3. **Transcript Errors**: Some YouTube videos may not have transcripts available
-
-### Debug Mode
-
-Enable verbose logging by modifying the agent initialization or check the console for detailed information.
-
-## 📄 License
-
-This project is part of a research initiative for legal technology applications.
-
 ## 🤝 Contributing
 
 To extend the system:
@@ -178,6 +154,6 @@ To extend the system:
 3. Add your agent to the `PlannerAgent` coordination logic
 4. Update the strategy analysis in `analyze_query()`
 
-## 📞 Support
-
-For issues or questions, check the console output for detailed error messages and ensure all prerequisites are properly configured.
+## Acknowledgements
+Thank you to **arXiv** for use of its open access interoperability.
+This application uses the official **YouTube Data API** to fetch and display video information. By using this service, you are bound by the **YouTube Terms of Service**.
