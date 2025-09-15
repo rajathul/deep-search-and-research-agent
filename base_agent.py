@@ -2,6 +2,7 @@ import os
 from abc import ABC, abstractmethod
 from typing import Dict, List, Any, Optional
 from google import genai
+from ollama import Client as OllamaClient
 
 class BaseAgent(ABC):
     """
@@ -9,13 +10,28 @@ class BaseAgent(ABC):
     Provides common functionality and enforces interface consistency.
     """
     
-    def __init__(self, name: str, model: str = "gemini-2.0-flash"):
+    def __init__(self, name: str, model: str = "gemma3:4b"):
         self.name = name
         self.model = model
-        self.client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
-        
+        if "gemini" in self.model.lower():
+            self.client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
+        else:
+            self.client = OllamaClient(
+                host='http://localhost:11434'
+            )
+
         if not os.getenv("GOOGLE_API_KEY"):
             raise ValueError("GOOGLE_API_KEY environment variable not set")
+    
+    def update_model(self, model: str):
+        """Update the model and reinitialize the client accordingly."""
+        self.model = model
+        if "gemini" in self.model.lower():
+            self.client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
+        else:
+            self.client = OllamaClient(
+                host='http://localhost:11434'
+            )
     
     @abstractmethod
     def search(self, query: str, **kwargs) -> List[Dict[str, Any]]:
@@ -39,11 +55,19 @@ class BaseAgent(ABC):
         """
         
         try:
-            response = self.client.models.generate_content(
-                model=self.model, 
-                contents=prompt
-            )
-            return response.text.strip() if response.text is not None else ""
+            if "gemini" in self.model.lower():
+                response = self.client.models.generate_content(
+                    model=self.model,
+                    contents=prompt
+                )
+                return response.text.strip() if response.text is not None else ""
+            else:
+                response = self.client.generate(
+                    model=self.model,
+                    prompt=prompt
+                )
+                return response['response'] if response['response'] is not None else ""
+
         except Exception as e:
             # Fallback to simple keyword extraction
             import re

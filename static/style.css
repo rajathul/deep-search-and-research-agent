@@ -738,6 +738,45 @@ body {
         font-size: 0.75rem;
         text-align: center;
     }
+
+    /* Mobile model selection adjustments */
+    .model-selection {
+        flex-direction: column;
+        gap: 0.8rem;
+        padding: 1rem;
+        text-align: center;
+    }
+    
+    .model-label {
+        font-size: 0.85rem;
+        justify-content: center;
+    }
+    
+    .model-dropdown {
+        min-width: 160px;
+        font-size: 0.85rem;
+        padding: 0.6rem 0.8rem;
+    }
+
+    /* Mobile simple timer adjustments */
+    .simple-timer {
+        margin-top: 1.5rem;
+        padding: 0.8rem;
+        min-width: 120px;
+    }
+    
+    .timer-icon {
+        font-size: 1.5rem;
+    }
+    
+    .simple-timer .timer-display {
+        font-size: 1.5rem;
+        letter-spacing: 1px;
+    }
+    
+    .simple-timer .timer-label {
+        font-size: 0.8rem;
+    }
 }
 
 /* Responsive design for different screen sizes */
@@ -938,4 +977,205 @@ body {
 
 .toggle-input:not(:checked) ~ .mode-text-right {
     opacity: 0.6;
+}
+
+/* Model Selection */
+.model-selection-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    width: 100%;
+}
+
+.model-selection {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(20, 20, 20, 0.4);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.model-selection:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(30, 30, 30, 0.5);
+}
+
+.model-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.model-label i {
+    color: #ff9800;
+    font-size: 1rem;
+}
+
+.model-dropdown {
+    background: rgba(40, 40, 40, 0.8);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none;
+    min-width: 180px;
+}
+
+.model-dropdown:hover {
+    border-color: rgba(255, 152, 0, 0.5);
+    background: rgba(50, 50, 50, 0.9);
+}
+
+.model-dropdown:focus {
+    border-color: #ff9800;
+    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.2);
+    background: rgba(50, 50, 50, 0.9);
+}
+
+.model-dropdown option {
+    background: #2a2a2a;
+    color: #fff;
+    padding: 0.5rem;
+    font-weight: 500;
+}
+
+.model-dropdown option:hover {
+    background: rgba(255, 152, 0, 0.2);
+}
+
+/* Model type visual feedback */
+.model-selection.gemini-model {
+    border-color: rgba(66, 165, 245, 0.4);
+}
+
+.model-selection.gemini-model:hover {
+    border-color: rgba(66, 165, 245, 0.6);
+    background: rgba(66, 165, 245, 0.1);
+}
+
+.model-selection.ollama-model {
+    border-color: rgba(76, 175, 80, 0.4);
+}
+
+.model-selection.ollama-model:hover {
+    border-color: rgba(76, 175, 80, 0.6);
+    background: rgba(76, 175, 80, 0.1);
+}
+
+/* Simple Research Timer */
+.simple-timer {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: rgba(20, 20, 20, 0.4);
+    border-radius: 12px;
+    border: 2px solid rgba(255, 152, 0, 0.3);
+    backdrop-filter: blur(10px);
+    min-width: 150px;
+}
+
+.timer-icon {
+    font-size: 2rem;
+    animation: timer-bounce 2s ease-in-out infinite;
+}
+
+@keyframes timer-bounce {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.simple-timer .timer-display {
+    font-family: 'Courier New', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ff9800;
+    text-shadow: 0 0 10px rgba(255, 152, 0, 0.6);
+    letter-spacing: 2px;
+}
+
+.simple-timer .timer-label {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.simple-timer.completed {
+    border-color: rgba(76, 175, 80, 0.5);
+    animation: timer-complete-simple 1s ease-in-out;
+}
+
+.simple-timer.completed .timer-display {
+    color: #4caf50;
+    text-shadow: 0 0 15px rgba(76, 175, 80, 0.8);
+}
+
+@keyframes timer-complete-simple {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+    }
+}
+
+/* Completion Time Badge Animation */
+@keyframes completion-glow {
+    0% {
+        transform: scale(0.9);
+        opacity: 0;
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(76, 175, 80, 0.6);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+}
+
+/* Timer completion animation */
+@keyframes timer-complete {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 20px rgba(76, 175, 80, 0.8));
+    }
+    100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 10px rgba(76, 175, 80, 0.6));
+    }
 }

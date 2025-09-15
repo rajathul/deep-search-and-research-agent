@@ -30,13 +30,18 @@ class ArxivAgent(BaseAgent):
         """
         
         try:
-            response = self.client.models.generate_content(
-                model=self.model, contents=prompt
-            )
-            if response.text is not None:
-                return response.text.strip()
+            if "gemini" in self.model.lower():
+                response = self.client.models.generate_content(
+                    model=self.model,
+                    contents=prompt
+                )
+                return response.text.strip() if response.text is not None else ""
             else:
-                return ""
+                response = self.client.generate(
+                    model=self.model,
+                    prompt=prompt
+                )
+                return response['response'] if response['response'] is not None else ""
         except Exception:
             return super().generate_search_query(user_question, **kwargs)
     

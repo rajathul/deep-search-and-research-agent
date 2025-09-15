@@ -7,12 +7,14 @@ An intelligent AI-powered research assistant with **dual research modes** that a
 - **🧠 Dual Research Modes**: 
   - **Deep Search**: Quick intelligent research across sources
   - **Deep Research**: Comprehensive multi-step analysis with question decomposition
+- **🤖 Multiple AI Models**: Choose from Gemma 3:4B, GPT-OSS, or Gemini 2.0 Flash
 - **📚 ArXiv Integration**: Searches academic papers with smart query generation
 - **🎥 YouTube Integration**: Analyzes video transcripts for recent trends and tutorials  
 - **🔗 Smart Synthesis**: Combines information from multiple sources with proper citations
 - **🎯 Adaptive Strategy**: AI chooses between ArXiv, YouTube, or both based on your question
 - **📊 Real-time Processing**: Live updates and intelligent loading messages
-- **🔄 Toggle Interface**: Easy switching between research modes
+- **⏱️ Visual Timer**: Animated research timer showing elapsed time and completion status
+- **🔄 Toggle Interface**: Easy switching between research modes and AI models
 
 ## 🏗️ Architecture
 
@@ -42,6 +44,16 @@ An intelligent AI-powered research assistant with **dual research modes** that a
 - **Extensible**: Easy to add new data sources
 - **Robust**: Comprehensive error handling
 - **Dual-Mode**: Flexible research depth based on user needs
+
+### AI Models
+
+The system supports multiple AI models with automatic client switching:
+
+- **Gemma 3:4B** (Default): Fast, efficient local model via Ollama
+- **GPT-OSS Latest**: Open-source GPT model via Ollama
+- **Gemini 2.0 Flash**: Google's latest model via Gemini API
+
+*Models are automatically routed to the appropriate backend (Ollama or Google AI) based on selection.*
 
 ## 🚀 Quick Start
 
@@ -158,6 +170,7 @@ The system excels at various types of research questions:
 
 - `question` (required): Your research question
 - `research_mode` (optional): "deep_search" (default) or "deep_research"
+- `model` (optional): "gemma3:4b" (default), "gpt-oss:latest", or "gemini-2.0-flash"
 - `max_sources` (optional): Maximum sources to retrieve (1-10, default: 5)
 - `date_from` (optional): Filter ArXiv papers from this date
 - `date_to` (optional): Filter ArXiv papers to this date

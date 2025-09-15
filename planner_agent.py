@@ -45,11 +45,19 @@ class PlannerAgent(BaseAgent):
         """
         
         try:
-            response = self.client.models.generate_content(
-                model=self.model,
-                contents=prompt
-            )
-            analysis_text = response.text.strip() if response.text is not None else ""
+            if "gemini" in self.model.lower():
+                response = self.client.models.generate_content(
+                    model=self.model,
+                    contents=prompt
+                )
+                analysis_text = response.text.strip() if response.text is not None else ""
+            else:
+                response = self.client.generate(
+                    model=self.model,
+                    prompt=prompt
+                )
+                analysis_text = response['response'] if response['response'] is not None else ""
+
             
             # Parse the response
             analysis = {}

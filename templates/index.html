@@ -47,6 +47,21 @@
                     </div>
                 </div>
 
+                <!-- Model Selection -->
+                <div class="model-selection-container">
+                    <div class="model-selection">
+                        <label for="model-select" class="model-label">
+                            <i class="fas fa-cog"></i>
+                            <span>AI Model:</span>
+                        </label>
+                        <select id="model-select" name="model" class="model-dropdown">
+                            <option value="gemma3:4b" selected>Gemma 3:4B (Default)</option>
+                            <option value="gpt-oss:latest">GPT-OSS Latest</option>
+                            <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="main-search">
                     <input type="text" id="question" class="form-control" placeholder="e.g., How are diffusion models used for LLMs?" required>
                     <button type="submit" id="submit-btn">Intelligent Research</button>
@@ -84,6 +99,13 @@
                     <div class="circle"></div>
                 </div>
                 <p id="loading-text" class="loading-text">Preparing to research...</p>
+                
+                <!-- Simple Research Timer -->
+                <div class="simple-timer">
+                    <div class="timer-icon">⏱️</div>
+                    <div class="timer-display" id="simple-timer-display">00:00</div>
+                    <div class="timer-label">Research Time</div>
+                </div>
             </div>
 
             <div id="results-container"></div>

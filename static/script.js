@@ -15,8 +15,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     console.log('Multi-Agent Research System initialized');
 
+    // Initialize timer system
+    initResearchTimer();
+
     // Initialize deep research toggle
     initDeepResearchToggle();
+    
+    // Initialize model selection
+    initModelSelection();
 
     // Toggle advanced options visibility
     const toggleLink = document.getElementById('advanced-toggle');
@@ -43,6 +49,33 @@ function initDeepResearchToggle() {
     });
 }
 
+function initModelSelection() {
+    const modelSelect = document.getElementById('model-select');
+    
+    modelSelect.addEventListener('change', function() {
+        const selectedModel = this.value;
+        console.log('Model changed to:', selectedModel);
+        
+        // Update visual feedback based on model type
+        const modelSelection = document.querySelector('.model-selection');
+        modelSelection.classList.remove('gemini-model', 'ollama-model');
+        
+        if (selectedModel.includes('gemini')) {
+            modelSelection.classList.add('gemini-model');
+        } else {
+            modelSelection.classList.add('ollama-model');
+        }
+    });
+    
+    // Set initial state
+    const initialModel = modelSelect.value;
+    if (initialModel.includes('gemini')) {
+        document.querySelector('.model-selection').classList.add('gemini-model');
+    } else {
+        document.querySelector('.model-selection').classList.add('ollama-model');
+    }
+}
+
 document.getElementById('research-form').addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -52,15 +85,21 @@ document.getElementById('research-form').addEventListener('submit', async functi
     const resultsContainer = document.getElementById('results-container');
     const form = document.getElementById('research-form');
     const isDeepResearch = document.getElementById('deep-research-toggle').checked;
+    const selectedModel = document.getElementById('model-select').value;
 
     console.log('=== RESEARCH SUBMISSION ===');
     console.log('Question:', question);
     console.log('Mode:', isDeepResearch ? 'Deep Research' : 'Deep Search');
+    console.log('Model:', selectedModel);
     console.log('====================================');
     
     form.style.display = 'none';
     resultsContainer.innerHTML = '';
     loading.style.display = 'flex';
+    
+    // Start the research timer
+    resetResearchTimer();
+    startResearchTimer();
 
     // Different loading messages based on research mode
     let loadingMessages;
@@ -94,6 +133,7 @@ document.getElementById('research-form').addEventListener('submit', async functi
         const formData = new FormData();
         formData.append('question', question);
         formData.append('research_mode', isDeepResearch ? 'deep_research' : 'deep_search');
+        formData.append('model', selectedModel);
 
         const dateFrom = document.getElementById('date_from').value;
         const dateTo = document.getElementById('date_to').value;
@@ -133,6 +173,7 @@ document.getElementById('research-form').addEventListener('submit', async functi
                         <div class="strategy-info" style="background: rgba(74, 20, 140, 0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid #6a1b9a;">
                             <h4><i class="fas fa-brain"></i> AI Research Strategy</h4>
                             <p><strong>Mode:</strong> ${isDeepResearch ? 'Deep Research' : 'Deep Search'}</p>
+                            <p><strong>Model:</strong> ${selectedModel}</p>
                             <p><strong>Reasoning:</strong> ${strategy.reasoning}</p>
                             <p><strong>Sources Used:</strong> ${strategy.use_arxiv ? 'ArXiv' : ''} ${strategy.use_arxiv && strategy.use_youtube ? '+ ' : ''}${strategy.use_youtube ? 'YouTube' : ''}</p>`;
                     
@@ -172,8 +213,35 @@ document.getElementById('research-form').addEventListener('submit', async functi
         resultsContainer.innerHTML = `<div class="alert alert-danger">An error occurred: ${error.message}</div>`;
     } finally {
         clearInterval(textInterval);
+        
+        // Stop the timer and get completion time
+        const completionTime = stopResearchTimer();
+        
         loading.style.display = 'none';
         form.style.display = 'flex';
+        
+        // Add completion time to results if research was successful
+        if (completionTime && resultsContainer.innerHTML && !resultsContainer.innerHTML.includes('alert-danger')) {
+            const completionBadge = `
+                <div class="completion-time-badge" style="
+                    background: linear-gradient(135deg, #4caf50, #45a049);
+                    color: white;
+                    padding: 0.8rem 1.5rem;
+                    border-radius: 12px;
+                    margin-bottom: 1.5rem;
+                    text-align: center;
+                    font-family: 'Poppins', sans-serif;
+                    font-weight: 600;
+                    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+                    animation: completion-glow 2s ease-in-out;
+                ">
+                    <i class="fas fa-clock" style="margin-right: 0.5rem;"></i>
+                    Research completed in ${completionTime.formatted}
+                </div>
+            `;
+            resultsContainer.insertAdjacentHTML('afterbegin', completionBadge);
+        }
+        
         // Don't clear the question to allow for follow-up searches
     }
 });
@@ -448,4 +516,89 @@ function addMouseTrackingEffect() {
         card.style.transform = 'perspective(2000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
         card.style.transition = 'transform 0.3s ease-out';
     });
+}
+
+// Simple Research Timer Management
+let simpleTimer = {
+    startTime: null,
+    interval: null,
+    isRunning: false
+};
+
+function initResearchTimer() {
+    // Simple timer initialization
+    const timerDisplay = document.getElementById('simple-timer-display');
+    if (timerDisplay) {
+        timerDisplay.textContent = '00:00';
+    }
+}
+
+function startResearchTimer() {
+    if (simpleTimer.isRunning) return;
+    
+    simpleTimer.startTime = Date.now();
+    simpleTimer.isRunning = true;
+    
+    const timerDisplay = document.getElementById('simple-timer-display');
+    const timerContainer = document.querySelector('.simple-timer');
+    
+    // Remove completed state if present
+    if (timerContainer) {
+        timerContainer.classList.remove('completed');
+    }
+    
+    simpleTimer.interval = setInterval(() => {
+        const elapsed = Date.now() - simpleTimer.startTime;
+        const totalSeconds = Math.floor(elapsed / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        
+        if (timerDisplay) {
+            timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+    }, 1000);
+}
+
+function stopResearchTimer() {
+    if (!simpleTimer.isRunning) return;
+    
+    clearInterval(simpleTimer.interval);
+    simpleTimer.isRunning = false;
+    
+    // Calculate final time
+    const elapsed = Date.now() - simpleTimer.startTime;
+    const totalSeconds = Math.floor(elapsed / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    
+    // Add completion styling
+    const timerContainer = document.querySelector('.simple-timer');
+    if (timerContainer) {
+        timerContainer.classList.add('completed');
+    }
+    
+    // Return the formatted time
+    return {
+        elapsed: elapsed,
+        formatted: `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`,
+        totalSeconds: totalSeconds
+    };
+}
+
+function resetResearchTimer() {
+    if (simpleTimer.interval) {
+        clearInterval(simpleTimer.interval);
+    }
+    
+    simpleTimer.isRunning = false;
+    const timerDisplay = document.getElementById('simple-timer-display');
+    const timerContainer = document.querySelector('.simple-timer');
+    
+    if (timerDisplay) {
+        timerDisplay.textContent = '00:00';
+    }
+    
+    if (timerContainer) {
+        timerContainer.classList.remove('completed');
+    }
 }
