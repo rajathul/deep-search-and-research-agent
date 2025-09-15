@@ -39,6 +39,13 @@ class SynthesizerAgent(BaseAgent):
                 channel = source.get('channelTitle', '')
                 context += f"Source [{i}]: Title: {title}. Channel: {channel}. Transcript: {info}\n\n"
                 source_list_html += f'<li id="source-{i}"><a href="{link}" target="_blank" rel="noopener noreferrer">{title}</a> - {channel}</li>'
+            
+            elif source.get('source_type') == 'webpage':
+                title = source.get('title', 'No Title')
+                info = source.get('content', 'No content available.')
+                link = source.get('link', '#')
+                context += f"Source [{i}]: Title: {title}. Content: {info}\n\n"
+                source_list_html += f'<li id="source-{i}"><a href="{link}" target="_blank" rel="noopener noreferrer">{title}</a></li>'
         
         source_list_html += "</ol>"
         

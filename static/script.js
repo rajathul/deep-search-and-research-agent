@@ -135,6 +135,11 @@ document.getElementById('research-form').addEventListener('submit', async functi
         formData.append('research_mode', isDeepResearch ? 'deep_research' : 'deep_search');
         formData.append('model', selectedModel);
 
+        // Add webpage URL field
+        const webpageUrl = document.getElementById('webpage_url').value;
+        formData.append('webpage_url', webpageUrl);
+        console.log('JavaScript: Webpage URL being sent:', webpageUrl); // Debug log
+
         const dateFrom = document.getElementById('date_from').value;
         const dateTo = document.getElementById('date_to').value;
         if (dateFrom && dateTo) {

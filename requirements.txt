@@ -7,3 +7,4 @@ Jinja2
 google-api-python-client
 youtube-transcript-api
 tqdm
+crawl4ai

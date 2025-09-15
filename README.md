@@ -1,219 +1,136 @@
-# Multi-Agent Research System
+# Multi‑Agent Research System
 
-An intelligent AI-powered research assistant with **dual research modes** that automatically selects the best sources and strategies for answering your questions using ArXiv papers and YouTube videos.
+An AI-powered research assistant that orchestrates specialized agents to search, analyze, and synthesize findings from ArXiv papers, YouTube videos, and web pages. It features dual research modes, modern UX, and a clean, extensible architecture designed with engineering best practices recruiters love to see.
 
-## 🌟 Features
+## Highlights
 
-- **🧠 Dual Research Modes**: 
-  - **Deep Search**: Quick intelligent research across sources
-  - **Deep Research**: Comprehensive multi-step analysis with question decomposition
-- **🤖 Multiple AI Models**: Choose from Gemma 3:4B, GPT-OSS, or Gemini 2.0 Flash
-- **📚 ArXiv Integration**: Searches academic papers with smart query generation
-- **🎥 YouTube Integration**: Analyzes video transcripts for recent trends and tutorials  
-- **🔗 Smart Synthesis**: Combines information from multiple sources with proper citations
-- **🎯 Adaptive Strategy**: AI chooses between ArXiv, YouTube, or both based on your question
-- **📊 Real-time Processing**: Live updates and intelligent loading messages
-- **⏱️ Visual Timer**: Animated research timer showing elapsed time and completion status
-- **🔄 Toggle Interface**: Easy switching between research modes and AI models
+- Intelligent dual modes: Deep Search and Deep Research
+- Modular agent architecture with clear separations of concern
+- Pluggable model layer: Gemini via Google GenAI, or local OSS via Ollama
+- ArXiv, YouTube, and Webpage analysis with citation-aware synthesis
+- FastAPI backend, Jinja2 templates, and a polished, responsive frontend
+- Production-friendly: health check, input validation, graceful error handling
 
-## 🏗️ Architecture
+## Architecture Overview
 
-### Research Modes
+- Orchestration: `PlannerAgent`, `PlannerAgentDeepResearch`
+- Retrieval: `ArxivAgent`, `YoutubeAgent`, `WebpageAgent`
+- Reasoning & Synthesis: `SynthesizerAgent`, `SynthesizerAgentDeepResearch`
+- Decomposition: `DecompositionAgent` (for Deep Research)
 
-#### Deep Search Mode
-- **PlannerAgent**: Fast strategy selection and execution
-- **SynthesizerAgent**: Quick synthesis with citations
+Data flow (simplified):
+1) User submits question (+ optional URL/date range/source count) →
+2) Planner selects strategy and sources →
+3) Source agents fetch and process content →
+4) Synthesizer produces a cited report →
+5) Frontend renders with rich UI and typewriter effect.
 
-#### Deep Research Mode  
-- **PlannerAgentDeepResearch**: Advanced multi-step research coordination
-- **DecompositionAgent**: Breaks complex questions into sub-questions
-- **SynthesizerAgentDeepResearch**: Comprehensive report generation with structured format
+Design principles:
+- Modular components, easy to test and extend
+- Clear agent contracts via `BaseAgent`
+- Resilient error handling with informative logs
+- Minimal coupling; simple to add new sources or models
 
-### Core Agents
+## Tech Stack
 
-1. **PlannerAgent / PlannerAgentDeepResearch**: Master coordinators that analyze queries and manage research strategy
-2. **ArxivAgent**: Specialized for searching and processing academic papers
-3. **YoutubeAgent**: Handles video search and transcript extraction
-4. **SynthesizerAgent / SynthesizerAgentDeepResearch**: Combines and synthesizes information from all sources
-5. **DecompositionAgent**: Breaks down complex questions (Deep Research only)
+- Backend: FastAPI, Python 3.8+
+- LLM Clients: Google GenAI (`google-genai`), Ollama client
+- Frontend: Jinja2, vanilla JS, Marked.js for Markdown rendering
+- Integrations: ArXiv API, YouTube Data + transcripts, simple webpage crawler
 
-### Key Design Principles
+## Quick Start
 
-- **Modular**: Each agent has a specific responsibility
-- **Intelligent**: AI decides the best approach for each query
-- **Extensible**: Easy to add new data sources
-- **Robust**: Comprehensive error handling
-- **Dual-Mode**: Flexible research depth based on user needs
-
-### AI Models
-
-The system supports multiple AI models with automatic client switching:
-
-- **Gemma 3:4B** (Default): Fast, efficient local model via Ollama
-- **GPT-OSS Latest**: Open-source GPT model via Ollama
-- **Gemini 2.0 Flash**: Google's latest model via Gemini API
-
-*Models are automatically routed to the appropriate backend (Ollama or Google AI) based on selection.*
-
-## 🚀 Quick Start
-
-### Prerequisites
-
+Prerequisites:
 - Python 3.8+
-- Google API Key (for Gemini AI and YouTube)
+- Google API key for Gemini (`GOOGLE_API_KEY`)
+- For non-Gemini models: Ollama running locally at `http://localhost:11434` and an available model (e.g., `gemma3:4b`)
 
-### Installation
-
-1. **Clone and navigate to the project:**
-   ```bash
-   cd arxiv_agent
-   ```
-
-2. **Set up your Google API key:**
-   ```bash
-   export GOOGLE_API_KEY='your_api_key_here'
-   ```
-
-3. **Run the startup script:**
-   ```bash
-   ./start.sh
-   ```
-
-4. **Open your browser to:**
-   ```
-   http://localhost:8000
-   ```
-
-## 🔧 Manual Setup
-
-If you prefer manual setup:
-
+One‑command setup:
 ```bash
-# Create virtual environment
+./start.sh
+```
+Then open: `http://localhost:8000`
+
+Manual setup:
+```bash
 python3 -m venv venv
 source venv/bin/activate
-
-# Install dependencies
 pip install -r requirements.txt
-
-# Set API key
 export GOOGLE_API_KEY='your_api_key_here'
-
-# Test the system
 python test_system.py
-
-# Start the server
 python main_multiagent.py
 ```
 
-## 🎯 How It Works
+## Usage
 
-### Research Mode Selection
-Use the toggle in the interface to choose your research approach:
+- Enter your question and optionally a webpage URL to analyze alongside the research.
+- Toggle between Deep Search (fast sweep) and Deep Research (decomposition + multi‑step synthesis).
+- Choose the model: `gemma3:4b` (default), `gpt-oss:latest`, or `gemini-2.0-flash`.
+- Use Advanced Options to set date filters and max sources.
 
-#### 🔍 Deep Search Mode (Default)
-- **Fast & Efficient**: Quick intelligent research
-- **Direct Analysis**: Analyzes your question and selects optimal sources
-- **Streamlined**: Searches ArXiv and/or YouTube based on query type
-- **Quick Synthesis**: Combines findings with citations
-
-#### 🔬 Deep Research Mode  
-- **Comprehensive**: Multi-step research process
-- **Question Decomposition**: Breaks complex questions into sub-questions
-- **Thorough Investigation**: Researches each component separately
-- **Structured Reports**: Executive summary, findings, and conclusions
-- **Enhanced Synthesis**: Holistic analysis across all sub-components
-
-### 1. Query Analysis (Both Modes)
-The system analyzes your question to determine:
-- Whether academic papers are needed (ArXiv)
-- Whether recent trends/tutorials are needed (YouTube)
-- Complexity level and recency requirements
-
-### 2. Research Execution
-
-#### Deep Search Mode:
-- Searches ArXiv for academic papers
-- Searches YouTube for videos and extracts transcripts  
-- Uses selected sources for comprehensive coverage
-
-#### Deep Research Mode:
-- **Step 1**: Decomposes question into 3-5 sub-questions
-- **Step 2**: Researches each sub-question independently
-- **Step 3**: Aggregates sources from all sub-question research
-- **Step 4**: Creates comprehensive synthesis
-
-### 3. Smart Synthesis (Both Modes)
-The SynthesizerAgent:
-- Combines information from all sources
-- Adds proper citations [1], [2], etc.
-- Creates coherent, well-structured reports
-- **Deep Research**: Uses structured format with Executive Summary, Key Findings, and Conclusions
-
-## 📝 Example Queries
-
-The system excels at various types of research questions:
-
-- **Academic**: "What are the latest developments in transformer models?"
-- **Technical**: "How do diffusion models work for image generation?"  
-- **Practical**: "Best practices for fine-tuning large language models"
-- **Comparative**: "Differences between BERT and GPT architectures"
-- **Complex** (Deep Research): "What are the implications of quantum computing for machine learning?"
-
-## 🛠️ API Endpoints
-
-- `GET /` - Web interface
-- `GET /health` - System health check
-- `POST /research` - Submit research query
-
-### Research Parameters
-
-- `question` (required): Your research question
-- `research_mode` (optional): "deep_search" (default) or "deep_research"
-- `model` (optional): "gemma3:4b" (default), "gpt-oss:latest", or "gemini-2.0-flash"
-- `max_sources` (optional): Maximum sources to retrieve (1-10, default: 5)
-- `date_from` (optional): Filter ArXiv papers from this date
-- `date_to` (optional): Filter ArXiv papers to this date
-
-## 🔍 Advanced Configuration
-
-### Environment Variables
-
+Example cURL (form submission):
 ```bash
-GOOGLE_API_KEY=your_google_api_key_here
+curl -X POST http://localhost:8000/research \
+  -F 'question=How are diffusion models used for LLMs?' \
+  -F 'research_mode=deep_search' \
+  -F 'model=gemma3:4b' \
+  -F 'max_sources=5' \
+  -F 'date_from=2020-01-01' \
+  -F 'date_to=2025-01-01' \
+  -F 'webpage_url=https://example.com/blog/diffusion-and-llms'
 ```
 
-### Customizing Agent Behavior
+## API
 
-Each agent can be customized by modifying their respective files:
+- `GET /` → Web UI
+- `GET /health` → Health check
+- `POST /research` → Research request
 
-- `planner_agent.py` - Modify strategy selection logic
-- `arxiv_agent.py` - Adjust search query generation
-- `youtube_agent.py` - Change transcript processing
-- `synthesizer_agent.py` - Customize report formatting
+Parameters (form fields):
+- `question` (required): research question
+- `research_mode` (optional): `deep_search` or `deep_research`
+- `model` (optional): `gemma3:4b`, `gpt-oss:latest`, or `gemini-2.0-flash`
+- `max_sources` (optional): 1–10 (default 5)
+- `date_from`, `date_to` (optional): range for ArXiv
+- `webpage_url` (optional): analyze a specific page
 
-## 🧪 Testing
+## Development Notes
 
-Run the system test to verify everything is working:
+- Entry point: `main_multiagent.py`
+- Frontend: `templates/index.html`, `static/script.js`, `static/style.css`
+- Agents: `arxiv_agent.py`, `youtube_agent.py`, `webpage_agent.py`, `synthesizer_agent.py`, `planner_agent.py`, `planner_agent_deep_research.py`, `decomposition_agent.py`
+- Base contracts: `base_agent.py` (handles model client selection and query generation)
 
+Testing:
 ```bash
-# Test both research modes
 python test_both_modes.py
-
-# Or test basic functionality
 python test_system.py
 ```
 
-## 🤝 Contributing
+## Deployment
 
-To extend the system:
+Local server:
+```bash
+python main_multiagent.py   # runs uvicorn at http://localhost:8000
+```
 
-1. Create new agents by inheriting from `BaseAgent`
-2. Implement the required abstract methods
-3. Add your agent to the `PlannerAgent` coordination logic
-4. Update the strategy analysis in `analyze_query()`
+Vercel (serverless):
+- `vercel.json` routes all paths to `main_multiagent.py` using `@vercel/python`.
+- Ensure `GOOGLE_API_KEY` is set in Vercel project environment variables.
+
+## Troubleshooting
+
+- Webpage URL not reaching backend: hard refresh to clear cache. The app versions static assets with a query string to avoid this, but a forced reload ensures the latest `static/script.js` is used.
+- Non‑Gemini models: make sure Ollama is installed, running, and the model name you pick exists locally (e.g., `ollama pull gemma:2b` or appropriate `gemma3:4b` variant). If you only use Gemini, the Google API key is sufficient.
+- API key missing: the backend validates `GOOGLE_API_KEY` early. Set it before running.
+
+## Roadmap
+
+- Add more data sources (Semantic Scholar, arXiv categories, web search)
+- Add vector cache for de‑duplication and faster synthesis context
+- Richer planner reasoning traces and explainability panel in UI
+- Dockerfile for standardized deployment
 
 ## Acknowledgements
-Thank you to **arXiv** for use of its open access interoperability.
 
-This application uses the official **YouTube Data API** to fetch and display video information. By using this service, you are bound by the **YouTube Terms of Service**.
+Thanks to arXiv for open access interoperability. This application uses the YouTube Data API; usage is subject to YouTube’s Terms of Service.
